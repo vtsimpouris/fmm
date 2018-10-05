@@ -1,13 +1,13 @@
 close all;
 clear all;
 %a,b is center of expansion
-a = 1;
-b = 1;
+a = 0;
+b = 0;
 m = 10;
 
 syms x y;
 syms F(x,y);
-F(x,y) = 1/sqrt((x-1000)^2+(y-1000)^2);
+F(x,y) = 1/sqrt((x-10)^2+(y-10)^2);
 f = sym('f',[m m]);
 f(1,1) = F;
 
@@ -18,7 +18,7 @@ for i = 2:m
     f(i,j+1) = diff(f(i-1,j),y,1);
 end
 pt = pascal_triangle(m);
-%center is (a,b) = (1,1)
+%center is (a,b)
 x = a;
 y = b;
 f = subs(f);
@@ -42,10 +42,10 @@ for i = 1:m
 end
 
 %% calculate f(x,y)
-x = 1.05;
-y = 1.05;
-f = subs(f);
-ff = zeros(m,1);
+x = vpa(1.5);
+y = vpa(-0.25);
+f = vpa(subs(f));
+ff = vpa(zeros(m,1));
 
 for i = 1:m
     for j = 1:i
@@ -53,10 +53,10 @@ for i = 1:m
     end
 end
 for i = 1:m
-    ff(i) = ff(i)/factorial(i);
+    ff(i) = ff(i)/factorial(i-1);
 end
-answer = 1/sqrt((x-1000)^2+(y-1000)^2)
-Taylor = sum(ff)
+answer = (1/sqrt((x-10)^2+(y-10)^2))
+Taylor = (sum(ff))
 error = abs((answer - Taylor)/answer)
     
     
