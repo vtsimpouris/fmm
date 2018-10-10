@@ -9,28 +9,25 @@ import numpy as np
 import math
 
 def pascal_triangle(n):
-    x = [[0] * n for i in range(n)]
+    x = np.zeros((n,n))
     for i in range(n):
-        x[i][0] = 1;
+        x[i,0] = 1;
     for j in range(1,n):
         for i in range(1,n):
-            x[j][i] = x[j - 1][i - 1] + x[j - 1][i];
+            x[j,i] = x[j - 1,i - 1] + x[j - 1,i];
     return x
-" a,b is the center of taylor expansion, be default is (0,0) "
-a = 0;
-b = 0;
+
+" cx,cy is the center of taylor expansion, be default is (0,0) "
+cx = 0;
+cy = 0;
 " n is the number of taylor terms we want "
-n = 3;
-" x,y is the point in which f(x,y) is calculated "
-x = 0.55
-y = 0.33
-tempx = x
-tempy = y
+n = 10;
+" x,y is the point in which f(a,b) is calculated "
+a = 0.55
+b = 0.33
 x,y = symbols('x y')
 " F is the kernel function " 
 F = 1/sqrt((x-10)**2+(y-10)**2)
-
-
 
 
 f = [[0] * n for i in range(n)]
@@ -40,40 +37,28 @@ for i in range(1,n):
     for j in range(0,i):
         f[i][j] = diff(f[i-1][j],x);
     f[i][j+1] = diff(f[i-1][j],y);
-
-p = pascal_triangle(n)
-for i in range(n):
-    for j in range(i):
-        f[i][j] = f[i][j]*p[i][j]
-        
 f = lambdify( [x,y], f, "numpy")
-f = f(a,b)
-
+f = f(cx,cy)
+p = pascal_triangle(n)
+f=np.multiply(f,p)
+        
 #calculate f(x,y)
-x = tempx
-y = tempy
-v = [[0] * n for i in range(n)]
+v = np.zeros((n,n))
 for i in range(n):
     for j in range(i+1):
-        v[i][j] = ((x-a)**(i-j))*((y-b)**j)
-        
-        
+        v[i,j] = ((a-cx)**(i-j))*((b-cy)**j)               
+f=np.multiply(f,v)
+
+sumf = np.zeros(n)
 for i in range(n):
-    for j in range(i+1):
-        f[i][j] = f[i][j]*v[i][j]
-sumf = [[0] * 1 for i in range(n)]
-f = np.asarray(f)
-for i in range(n):
-    for j in range(i+1):
-        sumf[i] += f[i][j]
+    sumf[i] = sum(f[i])
     sumf[i] = sumf[i]/(math.factorial(i))
-Taylor = 0
-for i in range(n):
-    Taylor += sumf[i]
-print("Taylor calculation is = %f" % (Taylor))
-answer = 1/sqrt((x-10)**2+(y-10)**2)
-print("real function value is = %f" %(answer))
-error = (answer - Taylor)/answer
-print("relative error is = %f " % (error))
+Taylor = sum(sumf)
+print("Taylor calculation is = %.20f" % (Taylor))
+answer = 1/sqrt((a-10)**2+(b-10)**2)
+print("real function value is = %.20f" %(answer))
+error = math.fabs((answer - Taylor)/answer)
+print("relative error is = %.20f " % (error))
+print("log10 of error is = %.5f " % (math.log10(error)))
 
 
