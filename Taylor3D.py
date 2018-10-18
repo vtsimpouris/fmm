@@ -7,7 +7,13 @@ calculates the func F(x,y,z) using taylor expansion around a center(a,b,c)
 from sympy import *
 import numpy as np
 import math
+from scipy.special import factorial as fact
 
+def pascal_pyramid(n):
+    p = np.zeros((n+1,n+1))
+    p = [[(fact(n)/(fact(n-i-j)*fact(i)*fact(j))) if j < n+1-i else 0 for j in range(n+1)]for i in range(n+1)]
+    return p
+    
 " cx,cy,cz is the center of taylor expansion, be default is (0,0,0) "
 cx = 0;
 cy = 0;
